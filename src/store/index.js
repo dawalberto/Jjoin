@@ -4,8 +4,14 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    currentPage: ''
+  },
+  mutations: {
+    updateCurrentPage(state, currentPage) {
+      state.currentPage = currentPage
+    }
+  },
   actions: {},
   modules: {}
 })
