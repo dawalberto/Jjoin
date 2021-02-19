@@ -16,30 +16,15 @@
         </div>
       </div>
     </div>
-    <div
-      class="flex justify-center bg-transparent fixed bottom-0 left-0 w-full p-10"
-    >
-      <div>
-        <button
-          class="mx-4 bg-gray-800 text-white px-6 py-4 w-32 text-center uppercase"
-        >
-          previous
-        </button>
-      </div>
-      <div>
-        <button
-          class="mx-4 bg-yellow-300 px-6 py-4 w-32 text-center uppercase"
-          @click="validateFiles"
-        >
-          next
-        </button>
-      </div>
-    </div>
+    <footer-control @next-screen="nextScreen" />
   </div>
 </template>
 
 <script>
+import FooterControl from '@/components/FooterControl'
+
 export default {
+  components: { FooterControl },
   mounted: function() {
     this.$store.commit('updateCurrentPage', this.$route.name)
   },
