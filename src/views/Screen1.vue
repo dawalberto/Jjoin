@@ -33,8 +33,8 @@ export default {
   },
   data() {
     return {
-      file1Name: '',
-      file2Name: '',
+      file1Name: 'f1',
+      file2Name: 'f2',
       file1Chosen: {},
       file2Chosen: {}
     }

@@ -4,6 +4,6 @@
 
 @layer components {
   .body-screen {
-    @apply flex justify-center items-center h-full -mt-32;
+    @apply flex justify-center items-center h-full w-full -mt-32;
   }
 }
