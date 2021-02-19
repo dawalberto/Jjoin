@@ -1,6 +1,6 @@
 <template>
   <div class="h-full">
-    <div class="flex justify-center">
+    <div class="body-screen">
       <div class="mx-4">
         <label for="file1Name">File 1:</label>
         <input type="text" id="file1Name" v-model="file1Name" />
@@ -66,6 +66,8 @@ export default {
     nextScreen() {
       this.buildFilesObjects()
       if (this.validateFiles()) {
+        this.$store.commit('setFile1', this.file1Chosen)
+        this.$store.commit('setFile2', this.file2Chosen)
         this.$router.push('screen2')
       }
     },
