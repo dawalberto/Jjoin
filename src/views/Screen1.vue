@@ -16,7 +16,10 @@
         </div>
       </div>
     </div>
-    <footer-control @next-screen="nextScreen" />
+    <footer-control
+      @next-screen="nextScreen"
+      @previous-screen="previousScreen"
+    />
   </div>
 </template>
 
@@ -65,6 +68,9 @@ export default {
       if (this.validateFiles()) {
         this.$router.push('screen2')
       }
+    },
+    previousScreen() {
+      this.$router.push('/')
     }
   }
 }
