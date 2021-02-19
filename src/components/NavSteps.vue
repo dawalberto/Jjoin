@@ -1,5 +1,5 @@
 <template>
-  <div id="nav">
+  <div id="nav" class="my-8">
     <div class="flex items-center justify-between w-2/5 h-full m-auto relative">
       <span
         class="absolute w-full border-b-2 border-dashed border-gray-700 z-0"

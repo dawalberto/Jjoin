@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-yellow-500 h-full">
     <h1>union condition</h1>
   </div>
 </template>

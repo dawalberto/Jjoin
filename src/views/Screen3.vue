@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-green-500 h-full">
     <h1>save files</h1>
   </div>
 </template>
