@@ -48,20 +48,23 @@ export default {
       this.file2Chosen.customName = this.file2Name
     },
     validateFiles() {
-      console.log(this.file1Chosen.customName)
-      console.log(this.file1Name)
-      if (!this.file1Chosen.customName || !this.file2Chosen.customName) {
-        alert('indicates a name for the files')
-        return
-      }
       if (!this.file1Chosen.path || !this.file2Chosen.path) {
         alert('select two files to continue')
-        return
+        return false
       }
+
+      if (!this.file1Chosen.customName || !this.file2Chosen.customName) {
+        alert('indicates a name for the files')
+        return false
+      }
+
+      return true
     },
     nextScreen() {
       this.buildFilesObjects()
-      this.validateFiles()
+      if (this.validateFiles()) {
+        this.$router.push('screen2')
+      }
     }
   }
 }
