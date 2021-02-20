@@ -3,12 +3,12 @@
     <h1 class="text-center">union conditions</h1>
     <div class="body-screen">
       <div class="file-container">
-        <xlsx-read :file="file1">
+        <xlsx-read :file="file1" @parsed="parsedFile1">
           <xlsx-table />
         </xlsx-read>
       </div>
       <div class="file-container">
-        <xlsx-read :file="file2">
+        <xlsx-read :file="file2" @parsed="parsedFile2">
           <xlsx-table />
         </xlsx-read>
       </div>
@@ -36,7 +36,6 @@ export default {
     this.$store.commit('updateCurrentPage', this.$route.name)
     this.file1 = this.$store.state.file1
     this.file2 = this.$store.state.file2
-    this.filesToJson()
   },
   data() {
     return {
@@ -47,14 +46,32 @@ export default {
     }
   },
   methods: {
-    filesToJson() {
-      let workbook = XLSX.readFile(this.file1.path)
-      let firsrWorksheet = workbook.Sheets[workbook.SheetNames[0]]
-      this.file1Json = XLSX.utils.sheet_to_json(firsrWorksheet, { header: 1 })
+    fileToJson(file, workSheet) {
+      switch (file) {
+        case 'file1':
+          this.file1Json = XLSX.utils.sheet_to_json(workSheet, { header: 1 })
+          this.$store.commit('setFileJson', {
+            file: 'file1',
+            json: this.file1Json
+          })
+          break
 
-      workbook = XLSX.readFile(this.file2.path)
-      firsrWorksheet = workbook.Sheets[workbook.SheetNames[0]]
-      this.file2Json = XLSX.utils.sheet_to_json(firsrWorksheet, { header: 1 })
+        case 'file2':
+          this.file2Json = XLSX.utils.sheet_to_json(workSheet, { header: 1 })
+          this.$store.commit('setFileJson', {
+            file: 'file2',
+            json: this.file2Json
+          })
+          break
+      }
+    },
+    parsedFile1(workbook) {
+      const firsrWorksheet = workbook.Sheets[workbook.SheetNames[0]]
+      this.fileToJson('file1', firsrWorksheet)
+    },
+    parsedFile2(workbook) {
+      const firsrWorksheet = workbook.Sheets[workbook.SheetNames[0]]
+      this.fileToJson('file2', firsrWorksheet)
     }
   }
 }

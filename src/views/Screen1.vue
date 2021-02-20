@@ -66,8 +66,14 @@ export default {
     nextScreen() {
       this.buildFilesObjects()
       if (this.validateFiles()) {
-        this.$store.commit('setFile1', this.file1Chosen)
-        this.$store.commit('setFile2', this.file2Chosen)
+        this.$store.commit('setFile', {
+          file: 'file1',
+          chosen: this.file1Chosen
+        })
+        this.$store.commit('setFile', {
+          file: 'file2',
+          chosen: this.file2Chosen
+        })
         this.$router.push('screen2')
       }
     },
