@@ -13,12 +13,14 @@
         </xlsx-read>
       </div>
     </div>
+    <pre>{{ file1Json }}</pre>
     <footer-control />
   </div>
 </template>
 
 <script>
 import FooterControl from '@/components/FooterControl.vue'
+import XLSX from '../../node_modules/xlsx/xlsx'
 import {
   XlsxRead,
   XlsxTable
@@ -30,16 +32,29 @@ export default {
     XlsxTable,
     FooterControl
   },
-  mounted: function() {
+  mounted() {
     this.$store.commit('updateCurrentPage', this.$route.name)
     this.file1 = this.$store.state.file1
     this.file2 = this.$store.state.file2
+    this.filesToJson()
   },
   data() {
     return {
       file1: {},
       file2: {},
-      collection: []
+      file1Json: {},
+      file2Json: {}
+    }
+  },
+  methods: {
+    filesToJson() {
+      let workbook = XLSX.readFile(this.file1.path)
+      let firsrWorksheet = workbook.Sheets[workbook.SheetNames[0]]
+      this.file1Json = XLSX.utils.sheet_to_json(firsrWorksheet, { header: 1 })
+
+      workbook = XLSX.readFile(this.file2.path)
+      firsrWorksheet = workbook.Sheets[workbook.SheetNames[0]]
+      this.file2Json = XLSX.utils.sheet_to_json(firsrWorksheet, { header: 1 })
     }
   }
 }
