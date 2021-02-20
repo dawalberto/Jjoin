@@ -18,6 +18,14 @@
       <h1 class="text-center text-4xl font-thin tracking-wider">
         Union conditions
       </h1>
+      <div class="mx-auto w-2/4 mt-2">
+        <union-conditions
+          :file1Name="file1.customName"
+          :file2Name="file2.customName"
+          :file1HeaderCols="file1HeaderCols"
+          :file2HeaderCols="file2HeaderCols"
+        />
+      </div>
       <div class="body-screen">
         <div class="file-container">
           <span class="file-name">{{ file1.customName }}</span>
@@ -46,18 +54,20 @@
 </template>
 
 <script>
-import FooterControl from '@/components/FooterControl.vue'
 import XLSX from '../../node_modules/xlsx/xlsx'
 import {
   XlsxRead,
   XlsxTable
 } from '../../node_modules/vue-xlsx/dist/vue-xlsx.es'
+import FooterControl from '@/components/FooterControl.vue'
+import UnionConditions from '../components/UnionConditions.vue'
 
 export default {
   components: {
     XlsxRead,
     XlsxTable,
-    FooterControl
+    FooterControl,
+    UnionConditions
   },
   mounted() {
     this.$store.commit('updateCurrentPage', this.$route.name)
@@ -70,6 +80,8 @@ export default {
       file2: {},
       file1Json: {},
       file2Json: {},
+      file1HeaderCols: [],
+      file2HeaderCols: [],
       file1Loaded: false,
       file2Loaded: false,
       filesLoaded: false
@@ -80,6 +92,7 @@ export default {
       switch (file) {
         case 'file1':
           this.file1Json = XLSX.utils.sheet_to_json(workSheet, { header: 1 })
+          this.file1HeaderCols = this.file1Json[0]
           this.$store.commit('setFileJson', {
             file: 'file1',
             json: this.file1Json
@@ -88,6 +101,7 @@ export default {
 
         case 'file2':
           this.file2Json = XLSX.utils.sheet_to_json(workSheet, { header: 1 })
+          this.file2HeaderCols = this.file2Json[0]
           this.$store.commit('setFileJson', {
             file: 'file2',
             json: this.file2Json

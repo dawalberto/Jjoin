@@ -9,7 +9,8 @@ export default new Vuex.Store({
     file1: null,
     file2: null,
     file1Json: null,
-    file2Json: null
+    file2Json: null,
+    conditionToAdd: {}
   },
   mutations: {
     updateCurrentPage(state, currentPage) {
@@ -34,6 +35,20 @@ export default new Vuex.Store({
 
         case 'file2':
           state.file2Json = fileJson.json
+          break
+      }
+    },
+    updateConditionToAdd(state, partCondition) {
+      switch (partCondition.part) {
+        case 'file1':
+          state.conditionToAdd.file1 = partCondition.file1
+          break
+        case 'file2':
+          state.conditionToAdd.file2 = partCondition.file2
+          break
+        case 'comparisonOperator':
+          state.conditionToAdd.comparisonOperator =
+            partCondition.comparisonOperator
           break
       }
     }
