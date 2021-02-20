@@ -15,9 +15,12 @@
       </div>
     </div>
     <div v-show="filesLoaded" class="h-full">
-      <h1 class="text-center">union conditions</h1>
+      <h1 class="text-center text-4xl font-thin tracking-wider">
+        Union conditions
+      </h1>
       <div class="body-screen">
         <div class="file-container">
+          <span class="file-name">{{ file1.customName }}</span>
           <xlsx-read
             :file="file1"
             @parsed="parsedFile1"
@@ -27,6 +30,7 @@
           </xlsx-read>
         </div>
         <div class="file-container">
+          <span class="file-name">{{ file2.customName }}</span>
           <xlsx-read
             :file="file2"
             @parsed="parsedFile2"
@@ -119,7 +123,12 @@ export default {
 
 <style>
 .file-container {
-  @apply mx-4 flex-grow h-2/5 w-2/4 overflow-scroll;
+  @apply mx-4 flex-grow h-2/5 w-2/4 overflow-scroll relative;
+}
+
+.file-name {
+  @apply sticky top-0 text-2xl text-gray-700 p-2 font-light tracking-wider bg-yellow-300 w-full inline-block;
+  /* backdrop-filter: blur(0.1rem); */
 }
 
 table {
