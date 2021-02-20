@@ -1,19 +1,42 @@
 <template>
   <div class="h-full">
-    <h1 class="text-center">union conditions</h1>
-    <div class="body-screen">
-      <div class="file-container">
-        <xlsx-read :file="file1" @parsed="parsedFile1">
-          <xlsx-table />
-        </xlsx-read>
-      </div>
-      <div class="file-container">
-        <xlsx-read :file="file2" @parsed="parsedFile2">
-          <xlsx-table />
-        </xlsx-read>
+    <div v-if="!filesLoaded">
+      <div
+        class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4"
+      >
+        <h1 class="text-4xl font-thin tracking-wider flex items-center">
+          <img
+            src="@/assets/images/loader.svg"
+            alt="loader"
+            class="inline mr-4 h-9 w-9 animate-spin"
+          />
+          <span>Procesing files</span>
+        </h1>
       </div>
     </div>
-    <pre>{{ file1Json }}</pre>
+    <div v-show="filesLoaded" class="h-full">
+      <h1 class="text-center">union conditions</h1>
+      <div class="body-screen">
+        <div class="file-container">
+          <xlsx-read
+            :file="file1"
+            @parsed="parsedFile1"
+            @loading="loadingFile1"
+          >
+            <xlsx-table />
+          </xlsx-read>
+        </div>
+        <div class="file-container">
+          <xlsx-read
+            :file="file2"
+            @parsed="parsedFile2"
+            @loading="loadingFile2"
+          >
+            <xlsx-table />
+          </xlsx-read>
+        </div>
+      </div>
+    </div>
     <footer-control />
   </div>
 </template>
@@ -42,7 +65,10 @@ export default {
       file1: {},
       file2: {},
       file1Json: {},
-      file2Json: {}
+      file2Json: {},
+      file1Loaded: false,
+      file2Loaded: false,
+      filesLoaded: false
     }
   },
   methods: {
@@ -72,6 +98,20 @@ export default {
     parsedFile2(workbook) {
       const firsrWorksheet = workbook.Sheets[workbook.SheetNames[0]]
       this.fileToJson('file2', firsrWorksheet)
+    },
+    loadingFile1(loading) {
+      this.file1Loaded = !loading
+
+      if (this.file1Loaded && this.file2Loaded) {
+        this.filesLoaded = true
+      }
+    },
+    loadingFile2(loading) {
+      this.file2Loaded = !loading
+
+      if (this.file1Loaded && this.file2Loaded) {
+        this.filesLoaded = true
+      }
     }
   }
 }
