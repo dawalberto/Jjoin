@@ -14,9 +14,12 @@
 export default {
   data() {
     return {
-      comparisonOperators: ['==', '!=', '<', '<=', '>=', '>'],
-      selected: 0
+      selected: 0,
+      comparisonOperators: []
     }
+  },
+  created() {
+    this.comparisonOperators = this.$store.state.comparisonOperators
   },
   methods: {
     updateConditionToAdd() {

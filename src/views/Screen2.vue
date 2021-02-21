@@ -18,7 +18,7 @@
       <h1 class="text-center text-4xl font-thin tracking-wider">
         Union conditions
       </h1>
-      <div class="mx-auto w-2/4 mt-2">
+      <div class="mx-auto w-2/4 h-2 mt-2">
         <union-conditions
           :file1Name="file1.customName"
           :file2Name="file2.customName"
@@ -49,7 +49,10 @@
         </div>
       </div>
     </div>
-    <footer-control />
+    <footer-control
+      @next-screen="nexScreen"
+      @previous-screen="previousScreen"
+    />
   </div>
 </template>
 
@@ -130,6 +133,16 @@ export default {
       if (this.file1Loaded && this.file2Loaded) {
         this.filesLoaded = true
       }
+    },
+    nexScreen() {
+      if (this.$store.state.conditions.length > 0) {
+        this.$router.push('screen3')
+      } else {
+        alert('You have to add at least one condition')
+      }
+    },
+    previousScreen() {
+      this.$router.push('screen1')
     }
   }
 }
