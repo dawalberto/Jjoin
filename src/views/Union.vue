@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-white absolute h-full w-full z-10">
+  <div>
     <button @click="backHome">HOME</button>
     <div
-      class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4 w-2/4 flex justify-center items-center"
+      class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4 w-2/5 flex justify-center items-center"
     >
       <progress :value="totalProgress" max="100"></progress>
     </div>
@@ -14,6 +14,9 @@ const fs = require('fs')
 import { mapState } from 'vuex'
 
 export default {
+  created() {
+    this.$store.commit('hiddeNav')
+  },
   mounted() {
     setTimeout(() => {
       this.parseValueToWriteInFiles()
@@ -95,7 +98,7 @@ export default {
     writeFileSync() {
       try {
         fs.writeFileSync(
-          '/Users/dawalberto/Desktop/union.sql',
+          '/Users/dawalberto/Desktop/jjoin.txt',
           this.oneFileValueReadyToWrite
         )
         //file written successfully

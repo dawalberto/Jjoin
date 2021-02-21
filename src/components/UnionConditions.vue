@@ -19,7 +19,7 @@
         </button>
       </template>
       <template v-else>
-        <button @click="addCondition" class="bg-green-300 w-8 h-8 ml-8">
+        <button @click="addCondition" class="bg-yellow-300 w-8 h-8 ml-8">
           <img
             src="@/assets/images/plus.svg"
             alt="add condition"

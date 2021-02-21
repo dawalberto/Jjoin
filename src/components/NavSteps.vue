@@ -1,5 +1,5 @@
 <template>
-  <div id="nav" class="my-8">
+  <div v-if="showNav" id="nav" class="my-8">
     <div class="flex items-center justify-between w-2/5 h-full m-auto relative">
       <span
         class="absolute w-full border-b-2 border-dashed border-gray-700 z-0"
@@ -30,12 +30,16 @@
 export default {
   data() {
     return {
-      currentPage: ''
+      currentPage: '',
+      showNav: false
     }
   },
   watch: {
     '$store.state.currentPage': function() {
       this.currentPage = this.$store.state.currentPage
+    },
+    '$store.state.showNav': function() {
+      this.showNav = this.$store.state.showNav
     }
   }
 }

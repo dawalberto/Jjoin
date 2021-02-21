@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    showNav: false,
     currentPage: '',
     file1: null,
     file2: null,
@@ -83,6 +84,12 @@ export default new Vuex.Store({
     },
     setManyFilesValue(state, manyFilesValue) {
       state.manyFilesValue = manyFilesValue
+    },
+    showNav(state) {
+      state.showNav = true
+    },
+    hiddeNav(state) {
+      state.showNav = false
     }
   },
   actions: {},

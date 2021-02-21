@@ -1,9 +1,14 @@
 <template>
-  <div></div>
+  <button @click="start">GO!</button>
 </template>
 
 <script>
 export default {
-  name: 'Home'
+  methods: {
+    start() {
+      this.$store.commit('showNav')
+      this.$router.push('screen1')
+    }
+  }
 }
 </script>
