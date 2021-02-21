@@ -28,7 +28,7 @@ import FooterControl from '@/components/FooterControl'
 
 export default {
   components: { FooterControl },
-  mounted: function() {
+  mounted() {
     this.$store.commit('updateCurrentPage', this.$route.name)
   },
   data() {

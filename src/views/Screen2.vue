@@ -72,8 +72,10 @@ export default {
     FooterControl,
     UnionConditions
   },
-  mounted() {
+  updated() {
     this.$store.commit('updateCurrentPage', this.$route.name)
+  },
+  mounted() {
     this.file1 = this.$store.state.file1
     this.file2 = this.$store.state.file2
   },
@@ -142,6 +144,7 @@ export default {
       }
     },
     previousScreen() {
+      this.$store.commit('deleteConditions')
       this.$router.push('screen1')
     }
   }

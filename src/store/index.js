@@ -56,6 +56,9 @@ export default new Vuex.Store({
     },
     addCondition(state, condition) {
       state.conditions.push(condition)
+    },
+    deleteConditions(state) {
+      state.conditions = []
     }
   },
   actions: {},
