@@ -1,5 +1,10 @@
 <template>
   <div class="h-full">
+    <fields-to-add
+      v-show="seeAddField"
+      @addField="addField"
+      class="fields-to-add"
+    />
     <div class="body-screen">
       <div class="w-2/4 mr-8">
         <div class="flex items-center">
@@ -8,8 +13,11 @@
             Save a file that for each match write this value
           </label>
         </div>
-        <textarea name="" id="" cols="30" rows="10"></textarea>
-        <button class="bg-yellow-300 px-6 py-4 w-full text-center uppercase">
+        <textarea v-model="oneFileValue" cols="30" rows="10"></textarea>
+        <button
+          @click="showAddField('oneFile')"
+          class="bg-yellow-300 px-6 py-4 w-full text-center uppercase"
+        >
           add field
         </button>
         <div class="mt-16">
@@ -36,8 +44,11 @@
             Save as many files as matches with this value
           </label>
         </div>
-        <textarea name="" id="" cols="30" rows="10"></textarea>
-        <button class="bg-yellow-300 px-6 py-4 w-full text-center uppercase">
+        <textarea v-model="manyFilesValue" cols="30" rows="10"></textarea>
+        <button
+          @click="showAddField('manyFiles')"
+          class="bg-yellow-300 px-6 py-4 w-full text-center uppercase"
+        >
           add field
         </button>
         <div class="mt-16">
@@ -58,20 +69,68 @@
         </div>
       </div>
     </div>
-    <footer-control />
+    <footer-control
+      @next-screen="nexScreen"
+      @previous-screen="previousScreen"
+    />
   </div>
 </template>
 
 <script>
+import FieldsToAdd from '../components/FieldsToAdd.vue'
 import FooterControl from '../components/FooterControl.vue'
+
 export default {
-  components: { FooterControl },
+  components: { FooterControl, FieldsToAdd },
   mounted() {
     this.$store.commit('updateCurrentPage', this.$route.name)
   },
   data() {
     return {
-      extensions: ['txt', 'sql']
+      extensions: ['txt', 'sql'],
+      seeAddField: false,
+      oneFileValue: '',
+      manyFilesValue: '',
+      addFieldsToOneFileValue: false,
+      addFieldsToManyFilesValue: false
+    }
+  },
+  methods: {
+    addField(field) {
+      this.seeAddField = false
+
+      if (this.addFieldsToOneFileValue) {
+        this.oneFileValue = `${this.oneFileValue.trimEnd()} ${field.file}[${
+          field.field.key
+        }] `
+      } else {
+        this.manyFilesValue = `${this.manyFilesValue.trimEnd()} ${field.file}[${
+          field.field.key
+        }] `
+      }
+    },
+    showAddField(to) {
+      switch (to) {
+        case 'oneFile':
+          this.addFieldsToOneFileValue = true
+          this.addFieldsToManyFilesValue = false
+          break
+        case 'manyFiles':
+          this.addFieldsToOneFileValue = false
+          this.addFieldsToManyFilesValue = true
+          break
+      }
+
+      this.seeAddField = true
+    },
+    nexScreen() {
+      // TODO check if at least one checkbox checked
+      this.$router.push('union')
+    },
+    previousScreen() {
+      this.$store.commit('deleteConditions')
+      this.$store.commit('clearConditionToAdd')
+      this.$router.push('screen2')
     }
   }
 }
@@ -107,5 +166,10 @@ input[type='checkbox']:checked:after {
 
 .select-extension-file {
   @apply focus:outline-none border border-gray-700 focus:border-yellow-300 p-0.5;
+}
+
+.fields-to-add {
+  @apply absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4 w-2/4 z-10 p-4 border border-gray-700;
+  backdrop-filter: blur(0.3rem);
 }
 </style>

@@ -66,11 +66,6 @@ export default {
   },
   data() {
     return {
-      //   conditionToAdd: {
-      //     file1: { key: 0, text: '' },
-      //     comparisonOperator: { key: 0, text: '' },
-      //     file2: { key: 0, text: '' }
-      //   },
       conditions: []
     }
   },

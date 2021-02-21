@@ -10,6 +10,8 @@ export default new Vuex.Store({
     file2: null,
     file1Json: null,
     file2Json: null,
+    file1HeaderCols: null,
+    file2HeaderCols: null,
     conditionToAdd: {},
     conditions: [],
     comparisonOperators: ['==', '!=', '<', '<=', '>=', '>']
@@ -26,6 +28,17 @@ export default new Vuex.Store({
 
         case 'file2':
           state.file2 = fileChosen.chosen
+          break
+      }
+    },
+    setFileHeaderCols(state, file) {
+      switch (file.file) {
+        case 'file1':
+          state.file1HeaderCols = file.headerCols
+          break
+
+        case 'file2':
+          state.file2HeaderCols = file.headerCols
           break
       }
     },
@@ -59,6 +72,9 @@ export default new Vuex.Store({
     },
     deleteConditions(state) {
       state.conditions = []
+    },
+    clearConditionToAdd(state) {
+      state.conditionToAdd = {}
     }
   },
   actions: {},

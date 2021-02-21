@@ -30,6 +30,12 @@ const routes = [
     name: 'Screen3',
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/Screen3.vue')
+  },
+  {
+    path: '/union',
+    name: 'Union',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/Union.vue')
   }
 ]
 

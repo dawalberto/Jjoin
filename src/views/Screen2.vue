@@ -98,6 +98,10 @@ export default {
         case 'file1':
           this.file1Json = XLSX.utils.sheet_to_json(workSheet, { header: 1 })
           this.file1HeaderCols = this.file1Json[0]
+          this.$store.commit('setFileHeaderCols', {
+            file: 'file1',
+            headerCols: this.file1HeaderCols
+          })
           this.$store.commit('setFileJson', {
             file: 'file1',
             json: this.file1Json
@@ -107,6 +111,10 @@ export default {
         case 'file2':
           this.file2Json = XLSX.utils.sheet_to_json(workSheet, { header: 1 })
           this.file2HeaderCols = this.file2Json[0]
+          this.$store.commit('setFileHeaderCols', {
+            file: 'file2',
+            headerCols: this.file2HeaderCols
+          })
           this.$store.commit('setFileJson', {
             file: 'file2',
             json: this.file2Json
@@ -145,6 +153,7 @@ export default {
     },
     previousScreen() {
       this.$store.commit('deleteConditions')
+      this.$store.commit('clearConditionToAdd')
       this.$router.push('screen1')
     }
   }
