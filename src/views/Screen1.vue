@@ -52,12 +52,12 @@ export default {
     },
     validateFiles() {
       if (!this.file1Chosen.path || !this.file2Chosen.path) {
-        alert('select two files to continue')
+        alert('Select two files to continue')
         return false
       }
 
       if (!this.file1Chosen.customName || !this.file2Chosen.customName) {
-        alert('indicates a name for the files')
+        alert('Indicates a name for the files')
         return false
       }
 

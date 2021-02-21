@@ -7,3 +7,20 @@
     @apply flex justify-center items-center h-full w-full -mt-32;
   }
 }
+
+@layer base {
+  p,
+  span,
+  a,
+  label,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  input,
+  button {
+    @apply text-gray-700;
+  }
+}

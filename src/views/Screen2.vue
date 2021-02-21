@@ -157,7 +157,7 @@ export default {
 }
 
 .file-name {
-  @apply sticky top-0 text-2xl text-gray-700 p-2 font-light tracking-wider bg-yellow-300 w-full inline-block;
+  @apply sticky top-0 text-2xl p-2 font-light tracking-wider bg-yellow-300 w-full inline-block;
   /* backdrop-filter: blur(0.1rem); */
 }
 

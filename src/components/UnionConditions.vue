@@ -11,16 +11,10 @@
         <file-header-cols-select file="file2" :cols="file2HeaderCols" />
       </span>
       <template v-if="conditions.length > 0">
-        <button
-          @click="addCondition('&&')"
-          class="bg-yellow-300 text-gray-700 w-8 h-8 ml-8"
-        >
+        <button @click="addCondition('&&')" class="bg-yellow-300 w-8 h-8 ml-8">
           &&
         </button>
-        <button
-          @click="addCondition('||')"
-          class="bg-yellow-300 text-gray-700 w-8 h-8 ml-1"
-        >
+        <button @click="addCondition('||')" class="bg-yellow-300 w-8 h-8 ml-1">
           ||
         </button>
       </template>
