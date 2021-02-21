@@ -14,7 +14,9 @@ export default new Vuex.Store({
     file2HeaderCols: null,
     conditionToAdd: {},
     conditions: [],
-    comparisonOperators: ['==', '!=', '<', '<=', '>=', '>']
+    comparisonOperators: ['==', '!=', '<', '<=', '>=', '>'],
+    oneFileValue: '',
+    manyFilesValue: ''
   },
   mutations: {
     updateCurrentPage(state, currentPage) {
@@ -75,6 +77,12 @@ export default new Vuex.Store({
     },
     clearConditionToAdd(state) {
       state.conditionToAdd = {}
+    },
+    setOneFileValue(state, oneFileValue) {
+      state.oneFileValue = oneFileValue
+    },
+    setManyFilesValue(state, manyFilesValue) {
+      state.manyFilesValue = manyFilesValue
     }
   },
   actions: {},

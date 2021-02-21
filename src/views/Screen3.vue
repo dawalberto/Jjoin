@@ -125,6 +125,8 @@ export default {
     },
     nexScreen() {
       // TODO check if at least one checkbox checked
+      this.$store.commit('setOneFileValue', this.oneFileValue)
+      this.$store.commit('setManyFilesValue', this.manyFilesValue)
       this.$router.push('union')
     },
     previousScreen() {
