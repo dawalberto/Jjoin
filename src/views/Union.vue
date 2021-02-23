@@ -1,5 +1,6 @@
 <template>
   <div>
+    <button @click="buildCondition">buildCondition</button>
     <button @click="backHome">HOME</button>
     <div
       class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4 w-2/5 flex justify-center items-center"
@@ -21,7 +22,7 @@ export default {
     setTimeout(() => {
       this.parseValueToWriteInFiles()
       this.joinFiles()
-      this.writeFileSync()
+      // this.writeFileSync()
     }, 350)
   },
   computed: {
@@ -44,19 +45,19 @@ export default {
     }
   },
   methods: {
-    buildCondition() {
+    buildCondition(file1, file2) {
       let finalCondition = ''
-      let file1 = ''
-      let file2 = ''
+      let file1Value = ''
+      let file2Value = ''
       let comparisonOperator = ''
 
       this.conditions.forEach(condition => {
         if (typeof condition === 'object') {
-          file1 = `this.file1Json[i][${condition.file1.key}]`
-          file2 = `this.file2Json[j][${condition.file2.key}]`
+          file1Value = file1.file[file1.i][condition.file1.key]
+          file2Value = file2.file[file2.j][condition.file2.key]
           comparisonOperator = condition.comparisonOperator.text
 
-          finalCondition += `${file1} ${comparisonOperator} ${file2}`
+          finalCondition += `'${file1Value}' ${comparisonOperator} '${file2Value}'`
         } else {
           finalCondition += ` ${condition} `
         }
@@ -65,14 +66,21 @@ export default {
       return finalCondition
     },
     joinFiles() {
-      let condition = this.buildCondition()
+      let condition
       let oneFileValueToWrite = ''
       let oneFileValueToWriteEvaluated = ''
 
       for (let i = 0; i < this.file1Json.length; i++) {
         this.totalProgress = Math.round(((i + 1) * 100) / this.file1Json.length)
         for (let j = 0; j < this.file2Json.length; j++) {
-          if (eval(condition)) {
+          condition = new Function(
+            `return ${this.buildCondition(
+              { file: this.file1Json, i },
+              { file: this.file2Json, j }
+            )}`
+          )
+
+          if (condition()) {
             oneFileValueToWriteEvaluated = eval(
               `\`${this.oneFileValueParsed}\``
             )
