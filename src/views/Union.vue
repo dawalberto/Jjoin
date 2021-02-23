@@ -20,9 +20,8 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.parseValueToWriteInFiles()
       this.joinFiles()
-      // this.writeFileSync()
+      this.writeFileSync()
     }, 350)
   },
   computed: {
@@ -39,13 +38,11 @@ export default {
   data() {
     return {
       totalProgress: 0,
-      oneFileValueParsed: '',
-      oneFileValueReadyToWrite: '',
-      manyFilesValueParsed: ''
+      oneFileValueReadyToWrite: ''
     }
   },
   methods: {
-    buildCondition(file1, file2) {
+    buildCondition(i, j) {
       let finalCondition = ''
       let file1Value = ''
       let file2Value = ''
@@ -53,8 +50,8 @@ export default {
 
       this.conditions.forEach(condition => {
         if (typeof condition === 'object') {
-          file1Value = file1.file[file1.i][condition.file1.key]
-          file2Value = file2.file[file2.j][condition.file2.key]
+          file1Value = this.file1Json[i][condition.file1.key]
+          file2Value = this.file2Json[j][condition.file2.key]
           comparisonOperator = condition.comparisonOperator.text
 
           finalCondition += `'${file1Value}' ${comparisonOperator} '${file2Value}'`
@@ -68,40 +65,35 @@ export default {
     joinFiles() {
       let condition
       let oneFileValueToWrite = ''
-      let oneFileValueToWriteEvaluated = ''
 
       for (let i = 0; i < this.file1Json.length; i++) {
         this.totalProgress = Math.round(((i + 1) * 100) / this.file1Json.length)
         for (let j = 0; j < this.file2Json.length; j++) {
-          condition = new Function(
-            `return ${this.buildCondition(
-              { file: this.file1Json, i },
-              { file: this.file2Json, j }
-            )}`
-          )
+          condition = new Function(`return ${this.buildCondition(i, j)}`)
 
           if (condition()) {
-            oneFileValueToWriteEvaluated = eval(
-              `\`${this.oneFileValueParsed}\``
-            )
-            oneFileValueToWrite += `${oneFileValueToWriteEvaluated}\n`
+            oneFileValueToWrite += `${this.getValueToWriteInFile(i, j)}\n`
           }
         }
       }
 
-      console.log(oneFileValueToWrite)
       this.oneFileValueReadyToWrite = oneFileValueToWrite
     },
-    parseValueToWriteInFiles() {
-      this.oneFileValueParsed = this.oneFileValue
-      this.oneFileValueParsed = this.oneFileValueParsed.replace(
+    getValueToWriteInFile(i, j) {
+      let valueToWrite = this.oneFileValue.replaceAll(
         /file1\[(.{1,4})\]/g,
-        '${this.file1Json[i][$1]}'
+        (match, group) => {
+          return `${this.file1Json[i][group]}`
+        }
       )
-      this.oneFileValueParsed = this.oneFileValueParsed.replace(
+      valueToWrite = valueToWrite.replaceAll(
         /file2\[(.{1,4})\]/g,
-        '${this.file2Json[j][$1]}'
+        (match, group) => {
+          return `${this.file2Json[j][group]}`
+        }
       )
+
+      return valueToWrite
     },
     writeFileSync() {
       try {
