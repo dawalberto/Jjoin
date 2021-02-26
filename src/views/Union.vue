@@ -116,21 +116,15 @@ export default {
       }
     },
     joinFiles() {
-      let condition
-      let oneFileValueToWrite = ''
-
       for (let i = 0; i < this.file1Json.length; i++) {
         for (let j = 0; j < this.file2Json.length; j++) {
-          condition = this.buildCondition(i, j)
-
-          if (condition) {
-            oneFileValueToWrite += `${this.getValueToWriteInFile(i, j)}\n`
+          if (this.buildCondition(i, j)) {
+            this.oneFileValueReadyToWrite += this.getValueToWriteInFile(i, j)
             continue
           }
         }
       }
 
-      this.oneFileValueReadyToWrite = oneFileValueToWrite
       this.processing = false
     },
     getValueToWriteInFile(i, j) {
@@ -147,7 +141,7 @@ export default {
         }
       )
 
-      return valueToWrite
+      return `${valueToWrite}\n`
     },
     writeFileSync() {
       try {
