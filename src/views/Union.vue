@@ -1,11 +1,16 @@
 <template>
   <div>
-    <button @click="buildCondition">buildCondition</button>
+    <button @click="buildCondition(1, 1)">buildCondition</button>
     <button @click="backHome">HOME</button>
     <div
       class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4 w-2/5 flex justify-center items-center"
     >
       <progress :value="totalProgress" max="100"></progress>
+      <!-- <div class="progress-container">
+        <div class="progress-value" ref="progress">
+          {{ totalProgress }}
+        </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -21,8 +26,8 @@ export default {
   mounted() {
     setTimeout(() => {
       this.joinFiles()
-      this.writeFileSync()
-    }, 350)
+      // this.writeFileSync()
+    }, 100)
   },
   computed: {
     ...mapState([
@@ -33,7 +38,10 @@ export default {
       'conditions',
       'oneFileValue',
       'manyFilesValue'
-    ])
+    ]),
+    widthPercentage() {
+      return this.totalProgress + '%'
+    }
   },
   data() {
     return {
@@ -43,24 +51,68 @@ export default {
   },
   methods: {
     buildCondition(i, j) {
-      let finalCondition = ''
+      let condition
+      let nextCondition
+      let solvedCondition = ''
+      let solvedNextCondition = ''
       let file1Value = ''
       let file2Value = ''
       let comparisonOperator = ''
 
-      this.conditions.forEach(condition => {
-        if (typeof condition === 'object') {
-          file1Value = this.file1Json[i][condition.file1.key]
-          file2Value = this.file2Json[j][condition.file2.key]
-          comparisonOperator = condition.comparisonOperator.text
+      condition = this.conditions[0]
+      file1Value = this.file1Json[i][condition.file1.key]
+      file2Value = this.file2Json[j][condition.file2.key]
+      comparisonOperator = condition.comparisonOperator.text
+      solvedCondition = this.resolveCondition(
+        file1Value,
+        comparisonOperator,
+        file2Value
+      )
 
-          finalCondition += `'${file1Value}' ${comparisonOperator} '${file2Value}'`
-        } else {
-          finalCondition += ` ${condition} `
-        }
-      })
+      if (this.conditions.length === 1) {
+        return solvedCondition
+      }
 
-      return finalCondition
+      for (let x = 1; x < this.conditions.length; x = x + 2) {
+        nextCondition = this.conditions[x + 1]
+        file1Value = this.file1Json[i][nextCondition.file1.key]
+        file2Value = this.file2Json[j][nextCondition.file2.key]
+        comparisonOperator = nextCondition.comparisonOperator.text
+
+        solvedNextCondition = this.resolveCondition(
+          file1Value,
+          comparisonOperator,
+          file2Value
+        )
+
+        solvedCondition = this.resolveCondition(
+          solvedCondition,
+          this.conditions[x],
+          solvedNextCondition
+        )
+      }
+
+      return solvedCondition
+    },
+    resolveCondition(leftValue, operator, rightValue) {
+      switch (operator) {
+        case '&&':
+          return leftValue && rightValue
+        case '||':
+          return leftValue || rightValue
+        case '==':
+          return leftValue == rightValue
+        case '!=':
+          return leftValue != rightValue
+        case '<':
+          return leftValue < rightValue
+        case '<=':
+          return leftValue <= rightValue
+        case '>':
+          return leftValue > rightValue
+        case '>=':
+          return leftValue >= rightValue
+      }
     },
     joinFiles() {
       let condition
@@ -68,11 +120,13 @@ export default {
 
       for (let i = 0; i < this.file1Json.length; i++) {
         this.totalProgress = Math.round(((i + 1) * 100) / this.file1Json.length)
-        for (let j = 0; j < this.file2Json.length; j++) {
-          condition = new Function(`return ${this.buildCondition(i, j)}`)
 
-          if (condition()) {
+        for (let j = 0; j < this.file2Json.length; j++) {
+          condition = this.buildCondition(i, j)
+
+          if (condition) {
             oneFileValueToWrite += `${this.getValueToWriteInFile(i, j)}\n`
+            continue
           }
         }
       }
@@ -101,7 +155,6 @@ export default {
           '/Users/dawalberto/Desktop/jjoin.txt',
           this.oneFileValueReadyToWrite
         )
-        //file written successfully
       } catch (err) {
         console.error(err)
       }
@@ -116,6 +169,15 @@ export default {
 </script>
 
 <style>
+/* .progress-container {
+  @apply appearance-none h-5 w-full border border-gray-600 shadow-inner;
+}
+
+.progress-value {
+  @apply w-0 h-full bg-yellow-300;
+  transition: width 0.1s;
+} */
+
 progress[value] {
   @apply appearance-none w-full border border-gray-600;
 }
@@ -125,8 +187,8 @@ progress[value]::-webkit-progress-bar {
 }
 
 progress[value]::-webkit-progress-value {
-  @apply bg-yellow-300;
-  transition: width 0.1s;
+  @apply bg-yellow-300 transition-none;
+  /* transition: width 0.1s; */
 }
 
 progress[value]::-webkit-progress-value::after {
