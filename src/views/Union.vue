@@ -1,16 +1,20 @@
 <template>
   <div>
-    <button @click="buildCondition(1, 1)">buildCondition</button>
     <button @click="backHome">HOME</button>
     <div
-      class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4 w-2/5 flex justify-center items-center"
+      class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4"
     >
-      <progress :value="totalProgress" max="100"></progress>
-      <!-- <div class="progress-container">
-        <div class="progress-value" ref="progress">
-          {{ totalProgress }}
-        </div>
-      </div> -->
+      <h1 class="text-4xl font-thin tracking-wider flex items-center">
+        <template v-if="processing">
+          <img
+            src="@/assets/images/loader.svg"
+            alt="loader"
+            class="inline mr-4 h-9 w-9 animate-spin"
+          />
+          <span>Joining</span>
+        </template>
+        <span v-else>Joined 🎉</span>
+      </h1>
     </div>
   </div>
 </template>
@@ -27,7 +31,7 @@ export default {
     setTimeout(() => {
       this.joinFiles()
       // this.writeFileSync()
-    }, 100)
+    }, 0)
   },
   computed: {
     ...mapState([
@@ -38,14 +42,11 @@ export default {
       'conditions',
       'oneFileValue',
       'manyFilesValue'
-    ]),
-    widthPercentage() {
-      return this.totalProgress + '%'
-    }
+    ])
   },
   data() {
     return {
-      totalProgress: 0,
+      processing: true,
       oneFileValueReadyToWrite: ''
     }
   },
@@ -119,8 +120,6 @@ export default {
       let oneFileValueToWrite = ''
 
       for (let i = 0; i < this.file1Json.length; i++) {
-        this.totalProgress = Math.round(((i + 1) * 100) / this.file1Json.length)
-
         for (let j = 0; j < this.file2Json.length; j++) {
           condition = this.buildCondition(i, j)
 
@@ -132,6 +131,7 @@ export default {
       }
 
       this.oneFileValueReadyToWrite = oneFileValueToWrite
+      this.processing = false
     },
     getValueToWriteInFile(i, j) {
       let valueToWrite = this.oneFileValue.replaceAll(
@@ -168,37 +168,4 @@ export default {
 }
 </script>
 
-<style>
-/* .progress-container {
-  @apply appearance-none h-5 w-full border border-gray-600 shadow-inner;
-}
-
-.progress-value {
-  @apply w-0 h-full bg-yellow-300;
-  transition: width 0.1s;
-} */
-
-progress[value] {
-  @apply appearance-none w-full border border-gray-600;
-}
-
-progress[value]::-webkit-progress-bar {
-  @apply shadow-inner bg-white;
-}
-
-progress[value]::-webkit-progress-value {
-  @apply bg-yellow-300 transition-none;
-  /* transition: width 0.1s; */
-}
-
-progress[value]::-webkit-progress-value::after {
-  content: '';
-  width: 6px;
-  height: 6px;
-  position: absolute;
-  border-radius: 100%;
-  right: 7px;
-  top: 7px;
-  background-color: white;
-}
-</style>
+<style></style>

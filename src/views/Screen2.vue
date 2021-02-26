@@ -10,7 +10,7 @@
             alt="loader"
             class="inline mr-4 h-9 w-9 animate-spin"
           />
-          <span>Procesing files</span>
+          <span>Processing files</span>
         </h1>
       </div>
     </div>
