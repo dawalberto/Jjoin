@@ -40,8 +40,7 @@ export default {
       'file1HeaderCols',
       'file2HeaderCols',
       'conditions',
-      'oneFileValue',
-      'manyFilesValue'
+      'filesToSaveOptions'
     ])
   },
   data() {
@@ -126,9 +125,13 @@ export default {
       }
 
       this.processing = false
+      console.log(
+        'this.oneFileValueReadyToWrite',
+        this.oneFileValueReadyToWrite
+      )
     },
     getValueToWriteInFile(i, j) {
-      let valueToWrite = this.oneFileValue.replaceAll(
+      let valueToWrite = this.filesToSaveOptions.oneFile.value.replaceAll(
         /file1\[(.{1,4})\]/g,
         (match, group) => {
           return `${this.file1Json[i][group]}`

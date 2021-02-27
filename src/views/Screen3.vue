@@ -8,7 +8,13 @@
     <div class="body-screen">
       <div class="w-2/4 mr-8">
         <div class="flex items-center">
-          <input class="mr-2" type="checkbox" id="saveOneFile" checked />
+          <input
+            @change="checkboxChange"
+            class="mr-2"
+            type="checkbox"
+            id="saveOneFile"
+            checked
+          />
           <label for="saveOneFile">
             Save a file that for each match write this value
           </label>
@@ -22,10 +28,19 @@
         </button>
         <div class="mt-16">
           <div class="flex items-center">
-            <label for="file1Name" class="mr-2">Name:</label>
-            <input id="file1Name" type="text" class="input-file-name" />
-            <label for="file1Extension" class="mr-2">Extension:</label>
-            <select name="" id="file1Extension" class="select-extension-file">
+            <label for="oneFileName" class="mr-2">Name:</label>
+            <input
+              id="oneFileName"
+              v-model="oneFileName"
+              type="text"
+              class="input-file mr-6"
+            />
+            <label for="oneFileExtension" class="mr-2">Extension:</label>
+            <select
+              id="oneFileExtension"
+              v-model="oneFileExtension"
+              class="select-extension-file"
+            >
               <option
                 v-for="extension of extensions"
                 :key="extension"
@@ -39,7 +54,12 @@
       </div>
       <div class="w-2/4">
         <div class="flex items-center">
-          <input class="mr-2" type="checkbox" id="saveManyFiles" />
+          <input
+            @change="checkboxChange"
+            class="mr-2"
+            type="checkbox"
+            id="saveManyFiles"
+          />
           <label for="saveManyFiles">
             Save as many files as matches with this value
           </label>
@@ -53,10 +73,19 @@
         </button>
         <div class="mt-16">
           <div class="flex items-center">
-            <label for="file2Name" class="mr-2">Name:</label>
-            <input id="file2Name" type="text" class="input-file-name" />
-            <label for="file2Extension" class="mr-2">Extension:</label>
-            <select name="" id="file2Extension" class="select-extension-file">
+            <label for="manyFilesName" class="mr-2">Name:</label>
+            <input
+              id="manyFilesName"
+              v-model="manyFilesName"
+              type="text"
+              class="input-file mr-6"
+            />
+            <label for="manyFilesExtension" class="mr-2">Extension:</label>
+            <select
+              v-model="manyFilesExtension"
+              id="manyFilesExtension"
+              class="select-extension-file"
+            >
               <option
                 v-for="extension of extensions"
                 :key="extension"
@@ -89,10 +118,16 @@ export default {
     return {
       extensions: ['txt', 'sql'],
       seeAddField: false,
-      oneFileValue: '',
-      manyFilesValue: '',
       addFieldsToOneFileValue: false,
-      addFieldsToManyFilesValue: false
+      addFieldsToManyFilesValue: false,
+      oneFileChecked: true,
+      oneFileName: '',
+      oneFileValue: '',
+      oneFileExtension: 'txt',
+      manyFilesChecked: false,
+      manyFilesName: '',
+      manyFilesValue: '',
+      manyFilesExtension: 'txt'
     }
   },
   methods: {
@@ -123,10 +158,35 @@ export default {
 
       this.seeAddField = true
     },
+    checkboxChange(e) {
+      const checked = e.target.checked
+
+      if (e.target.id === 'saveOneFile') {
+        this.oneFileChecked = checked
+      } else if (e.target.id === 'saveManyFiles') {
+        this.manyFilesChecked = checked
+      }
+    },
     nexScreen() {
-      // TODO check if at least one checkbox checked
-      this.$store.commit('setOneFileValue', this.oneFileValue)
-      this.$store.commit('setManyFilesValue', this.manyFilesValue)
+      if (!this.oneFileChecked && !this.manyFilesChecked) {
+        alert('Check at least one option to save files')
+        return
+      }
+
+      this.$store.commit('setFilesToSaveOptions', {
+        option: 'oneFile',
+        checked: this.oneFileChecked,
+        value: this.oneFileValue,
+        name: this.oneFileName,
+        extension: this.oneFileExtension
+      })
+      this.$store.commit('setFilesToSaveOptions', {
+        option: 'manyFiles',
+        checked: this.manyFilesChecked,
+        value: this.manyFilesValue,
+        name: this.manyFilesName,
+        extension: this.manyFilesExtension
+      })
       this.$router.push('union')
     },
     previousScreen() {
@@ -162,8 +222,8 @@ input[type='checkbox']:checked:after {
   @apply text-gray-700;
 }
 
-.input-file-name {
-  @apply flex-grow border-b border-gray-700 mr-6 focus:outline-none focus:border-yellow-300;
+.input-file {
+  @apply flex-grow border-b border-gray-700 focus:outline-none focus:border-yellow-300;
 }
 
 .select-extension-file {

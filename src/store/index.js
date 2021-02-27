@@ -16,8 +16,20 @@ export default new Vuex.Store({
     conditionToAdd: {},
     conditions: [],
     comparisonOperators: ['==', '!=', '<', '<=', '>=', '>'],
-    oneFileValue: '',
-    manyFilesValue: ''
+    filesToSaveOptions: {
+      oneFile: {
+        checked: true,
+        value: '',
+        name: '',
+        extension: ''
+      },
+      manyFiles: {
+        checked: false,
+        value: '',
+        name: '',
+        extension: ''
+      }
+    }
   },
   mutations: {
     updateCurrentPage(state, currentPage) {
@@ -80,10 +92,22 @@ export default new Vuex.Store({
       state.conditionToAdd = {}
     },
     setOneFileValue(state, oneFileValue) {
-      state.oneFileValue = oneFileValue
+      state.filesToSaveOptions.oneFile.value = oneFileValue
     },
     setManyFilesValue(state, manyFilesValue) {
-      state.manyFilesValue = manyFilesValue
+      state.filesToSaveOptions.manyFiles.value = manyFilesValue
+    },
+    setFilesToSaveOptions(state, options) {
+      const { option, checked, value, name, extension } = options
+
+      state.filesToSaveOptions[option].checked =
+        checked || state.filesToSaveOptions[option].checked
+      state.filesToSaveOptions[option].value =
+        value || state.filesToSaveOptions[option].value
+      state.filesToSaveOptions[option].name =
+        name || state.filesToSaveOptions[option].name
+      state.filesToSaveOptions[option].extension =
+        extension || state.filesToSaveOptions[option].extension
     },
     showNav(state) {
       state.showNav = true
