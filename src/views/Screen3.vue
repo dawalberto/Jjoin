@@ -80,11 +80,11 @@
               type="text"
               class="input-file mr-6"
             />
-            <label for="manyFilesExtension" class="mr-2">Extension:</label>
+            <label for="manyFilesExtension" class="mx-2">Extension:</label>
             <select
               v-model="manyFilesExtension"
               id="manyFilesExtension"
-              class="select-extension-file"
+              class="select-extension-file mr-4"
             >
               <option
                 v-for="extension of extensions"
@@ -94,6 +94,12 @@
                 {{ extension }}
               </option>
             </select>
+            <button
+              @click="showAddField('manyFilesName')"
+              class=" bg-yellow-300 px-4 py-2 text-center uppercase"
+            >
+              add field
+            </button>
           </div>
         </div>
       </div>
@@ -120,6 +126,7 @@ export default {
       seeAddField: false,
       addFieldsToOneFileValue: false,
       addFieldsToManyFilesValue: false,
+      addFieldsToManyFilesName: false,
       oneFileChecked: true,
       oneFileName: '',
       oneFileValue: '',
@@ -135,13 +142,11 @@ export default {
       this.seeAddField = false
 
       if (this.addFieldsToOneFileValue) {
-        this.oneFileValue = `${this.oneFileValue.trimEnd()} ${field.file}[${
-          field.field.key
-        }] `
+        this.oneFileValue = `${this.oneFileValue}${field.file}[${field.field.key}]`
+      } else if (this.addFieldsToManyFilesValue) {
+        this.manyFilesValue = `${this.manyFilesValue}${field.file}[${field.field.key}]`
       } else {
-        this.manyFilesValue = `${this.manyFilesValue.trimEnd()} ${field.file}[${
-          field.field.key
-        }] `
+        this.manyFilesName = `${this.manyFilesName}${field.file}[${field.field.key}]`
       }
     },
     showAddField(to) {
@@ -149,10 +154,17 @@ export default {
         case 'oneFile':
           this.addFieldsToOneFileValue = true
           this.addFieldsToManyFilesValue = false
+          this.addFieldsToManyFilesName = false
           break
         case 'manyFiles':
           this.addFieldsToOneFileValue = false
           this.addFieldsToManyFilesValue = true
+          this.addFieldsToManyFilesName = false
+          break
+        case 'manyFilesName':
+          this.addFieldsToOneFileValue = false
+          this.addFieldsToManyFilesValue = false
+          this.addFieldsToManyFilesName = false
           break
       }
 
@@ -173,6 +185,16 @@ export default {
         return
       }
 
+      if (this.oneFileChecked && !this.oneFileName) {
+        alert('Write a name for the file')
+        return
+      }
+
+      if (this.manyFilesChecked && !this.manyFilesName) {
+        alert('Write a name for the files')
+        return
+      }
+
       this.$store.commit('setFilesToSaveOptions', {
         option: 'oneFile',
         checked: this.oneFileChecked,
@@ -187,6 +209,7 @@ export default {
         name: this.manyFilesName,
         extension: this.manyFilesExtension
       })
+
       this.$router.push('union')
     },
     previousScreen() {
