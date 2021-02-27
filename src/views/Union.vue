@@ -21,10 +21,12 @@
 
 <script>
 const fs = require('fs')
+// const { app } = require('electron')
 import { mapState } from 'vuex'
 
 export default {
   created() {
+    this.createTmpDirsIfNotExists()
     this.$store.commit('hiddeNav')
   },
   mounted() {
@@ -46,10 +48,32 @@ export default {
   data() {
     return {
       processing: true,
-      oneFileValueReadyToWrite: ''
+      oneFileValueReadyToWrite: '',
+      manyFilesValueReadyToWrite: '',
+      tempDirectoryJjoin: '',
+      tempDirectoryJjoinManyFiles: '',
+      manyFilesNameReadyToWrite: ''
     }
   },
   methods: {
+    createTmpDirsIfNotExists() {
+      // let tempDir = `${app.getPath('temp')}/.jjoin`
+      let tempDir = '/Users/dawalberto/Desktop/tempDev'
+      this.tempDirectoryJjoin = `${tempDir}/.jjoin`
+      this.tempDirectoryJjoinManyFiles = `${this.tempDirectoryJjoin}/jjoinFiles`
+      console.log(this.tempDirectoryJjoin)
+
+      if (!fs.existsSync(this.tempDirectoryJjoin)) {
+        fs.mkdirSync(this.tempDirectoryJjoin, { recursive: true })
+      }
+      if (this.filesToSaveOptions.manyFiles.checked) {
+        if (!fs.existsSync(this.tempDirectoryJjoinManyFiles)) {
+          fs.mkdirSync(this.tempDirectoryJjoinManyFiles, {
+            recursive: true
+          })
+        }
+      }
+    },
     buildCondition(i, j) {
       let condition
       let nextCondition
@@ -118,20 +142,40 @@ export default {
       for (let i = 0; i < this.file1Json.length; i++) {
         for (let j = 0; j < this.file2Json.length; j++) {
           if (this.buildCondition(i, j)) {
-            this.oneFileValueReadyToWrite += this.getValueToWriteInFile(i, j)
+            if (this.filesToSaveOptions.oneFile.checked) {
+              this.oneFileValueReadyToWrite += `${this.getValueToWriteInFile(
+                i,
+                j,
+                'oneFile'
+              )}\n`
+            }
+
+            if (this.filesToSaveOptions.manyFiles.checked) {
+              this.manyFilesValueReadyToWrite = this.getValueToWriteInFile(
+                i,
+                j,
+                'manyFiles'
+              )
+
+              this.manyFilesNameReadyToWrite = this.getValueToWriteInFile(i, j)
+              this.writeFileSync('manyFiles')
+            }
             continue
           }
         }
       }
 
       this.processing = false
-      console.log(
-        'this.oneFileValueReadyToWrite',
-        this.oneFileValueReadyToWrite
-      )
     },
-    getValueToWriteInFile(i, j) {
-      let valueToWrite = this.filesToSaveOptions.oneFile.value.replaceAll(
+    getValueToWriteInFile(i, j, writeIn) {
+      let valueToWrite
+      if (writeIn === 'oneFile' || writeIn === 'manyFiles') {
+        valueToWrite = this.filesToSaveOptions[writeIn].value
+      } else {
+        valueToWrite = this.filesToSaveOptions.manyFiles.name
+      }
+
+      valueToWrite = valueToWrite.replaceAll(
         /file1\[(.{1,4})\]/g,
         (match, group) => {
           return `${this.file1Json[i][group]}`
@@ -144,14 +188,27 @@ export default {
         }
       )
 
-      return `${valueToWrite}\n`
+      return valueToWrite
     },
-    writeFileSync() {
+    writeFileSync(file) {
+      let data
+      let directory
+      let name
+
+      if (file === 'oneFile') {
+        name = this.filesToSaveOptions.oneFile.name
+        directory = this.tempDirectoryJjoin
+        data = this.oneFileValueReadyToWrite
+      } else {
+        name = this.manyFilesNameReadyToWrite
+        directory = this.tempDirectoryJjoinManyFiles
+        data = this.manyFilesValueReadyToWrite
+      }
+
+      file = `${directory}/${name}.${this.filesToSaveOptions[file].extension}`
+      console.log(file)
       try {
-        fs.writeFileSync(
-          '/Users/dawalberto/Desktop/jjoin.txt',
-          this.oneFileValueReadyToWrite
-        )
+        fs.writeFileSync(file, data)
       } catch (err) {
         console.error(err)
       }
