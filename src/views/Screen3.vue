@@ -185,13 +185,16 @@ export default {
         return
       }
 
-      if (this.oneFileChecked && !this.oneFileName) {
-        alert('Write a name for the file')
+      if (this.oneFileChecked && (!this.oneFileName || !this.oneFileValue)) {
+        alert('Make sure to fill in the fields where you have checked')
         return
       }
 
-      if (this.manyFilesChecked && !this.manyFilesName) {
-        alert('Write a name for the files')
+      if (
+        this.manyFilesChecked &&
+        (!this.manyFilesName || !this.manyFilesValue)
+      ) {
+        alert('Make sure to fill in the fields where you have checked')
         return
       }
 

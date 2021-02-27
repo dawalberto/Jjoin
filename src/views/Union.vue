@@ -1,6 +1,13 @@
 <template>
   <div>
     <button @click="backHome">HOME</button>
+    <input
+      type="file"
+      id="selectDirToDownload"
+      @change="onSelectDirToDownload"
+      class="hidden"
+      webkitdirectory
+    />
     <div
       class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4"
     >
@@ -16,12 +23,24 @@
         <span v-else>Joined 🎉</span>
       </h1>
     </div>
+    <div
+      class="flex justify-center bg-transparent fixed bottom-0 left-0 w-full p-10"
+    >
+      <button
+        v-if="showDownloadButton"
+        @click="showPromptToSelectDirToDownload"
+        class="bg-yellow-300 py-4 px-6 uppercase tracking-wider font-thin text-4xl"
+      >
+        download files
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 const fs = require('fs')
 // const { app } = require('electron')
+const zipdir = require('zip-dir')
 import { mapState } from 'vuex'
 
 export default {
@@ -50,18 +69,30 @@ export default {
       processing: true,
       oneFileValueReadyToWrite: '',
       manyFilesValueReadyToWrite: '',
+      manyFilesNameReadyToWrite: '',
+      tempDirectory: '',
       tempDirectoryJjoin: '',
       tempDirectoryJjoinManyFiles: '',
-      manyFilesNameReadyToWrite: ''
+      directoryToDownload: '',
+      showDownloadButton: false
+    }
+  },
+  watch: {
+    processing(processing) {
+      if (!processing) {
+        if (this.filesToSaveOptions.oneFile.checked) {
+          this.writeFileSync('oneFile')
+        }
+        this.showDownloadButton = true
+      }
     }
   },
   methods: {
     createTmpDirsIfNotExists() {
-      // let tempDir = `${app.getPath('temp')}/.jjoin`
-      let tempDir = '/Users/dawalberto/Desktop/tempDev'
-      this.tempDirectoryJjoin = `${tempDir}/.jjoin`
+      // let tempDir = `${app.getPath('temp')}`
+      this.tempDirectory = '/Users/dawalberto/Desktop/tempDev'
+      this.tempDirectoryJjoin = `${this.tempDirectory}/.jjoin`
       this.tempDirectoryJjoinManyFiles = `${this.tempDirectoryJjoin}/jjoinFiles`
-      console.log(this.tempDirectoryJjoin)
 
       if (!fs.existsSync(this.tempDirectoryJjoin)) {
         fs.mkdirSync(this.tempDirectoryJjoin, { recursive: true })
@@ -206,12 +237,37 @@ export default {
       }
 
       file = `${directory}/${name}.${this.filesToSaveOptions[file].extension}`
-      console.log(file)
       try {
         fs.writeFileSync(file, data)
-      } catch (err) {
-        console.error(err)
+      } catch (error) {
+        console.erroror('writeFileSync', error)
       }
+    },
+    showPromptToSelectDirToDownload() {
+      document.querySelector('#selectDirToDownload').click()
+    },
+    async zipAndDownloadFiles() {
+      try {
+        await zipdir(this.tempDirectoryJjoin, {
+          saveTo: `${this.tempDirectory}/jjoin.zip`
+        })
+        fs.renameSync(
+          `${this.tempDirectory}/jjoin.zip`,
+          `${this.directoryToDownload}/jjoin.zip`
+        )
+        this.deleteTempDirectoryJjoin()
+      } catch (error) {
+        console.log('zipAndDownloadFiles', error)
+      }
+    },
+    onSelectDirToDownload(e) {
+      let directory = e.target.files[0].path
+      directory = directory.slice(0, directory.lastIndexOf('/'))
+      this.directoryToDownload = directory
+      this.zipAndDownloadFiles()
+    },
+    deleteTempDirectoryJjoin() {
+      fs.rmdirSync(this.tempDirectoryJjoin, { recursive: true })
     },
     backHome() {
       this.$store.commit('deleteConditions')
