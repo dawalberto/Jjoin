@@ -2,7 +2,7 @@
   <select
     @change="updateConditionToAdd"
     v-model="selected"
-    class="inline py-1 px-2 border border-green-300 focus:outline-none sm:text-sm"
+    class="inline py-1 px-2 border border-gray-800 focus:outline-none sm:text-sm"
   >
     <option v-for="(col, i) in cols" :key="i" :value="i">
       {{ col }}

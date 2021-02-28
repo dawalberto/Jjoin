@@ -162,11 +162,11 @@ export default {
 
 <style>
 .file-container {
-  @apply mx-4 flex-grow h-2/5 w-2/4 overflow-scroll relative;
+  @apply mx-4 flex-grow h-2/5 w-2/4 overflow-scroll relative bg-yellow-300;
 }
 
 .file-name {
-  @apply sticky top-0 text-2xl p-2 font-light tracking-wider bg-yellow-300 w-full inline-block;
+  @apply text-xl p-2 font-light tracking-wider w-full inline-block;
   /* backdrop-filter: blur(0.1rem); */
 }
 

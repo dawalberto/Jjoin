@@ -26,6 +26,7 @@
               name="files[]"
               ref="file1"
               id="file1"
+              class="hidden"
               @change="getFile1"
             />
             <div>
@@ -77,6 +78,7 @@
               name="files[]"
               ref="file2"
               id="file2"
+              class="hidden"
               @change="getFile2"
             />
             <div>
@@ -121,8 +123,8 @@ export default {
   },
   data() {
     return {
-      file1Name: 'f1',
-      file2Name: 'f2',
+      file1Name: 'File 1',
+      file2Name: 'File 2',
       file1Chosen: null,
       file2Chosen: null,
       isDragoverFile1: false,
@@ -136,18 +138,13 @@ export default {
     getFile2(event) {
       this.file2Chosen = event.target.files[0]
     },
-    buildFilesObjects() {
+    filesCustomName() {
       this.file1Chosen.customName = this.file1Name
       this.file2Chosen.customName = this.file2Name
     },
     validateFiles() {
-      if (!this.file1Chosen.path || !this.file2Chosen.path) {
+      if (!this.file1Chosen || !this.file2Chosen) {
         alert('Select two files to continue')
-        return false
-      }
-
-      if (!this.file1Chosen.customName || !this.file2Chosen.customName) {
-        alert('Indicates a name for the files')
         return false
       }
 
@@ -171,17 +168,15 @@ export default {
       this.dragLeave('file1')
       this.$refs.file1.files = e.dataTransfer.files
       this.file1Chosen = [...this.$refs.file1.files][0]
-      console.log([...this.$refs.file1.files][0])
     },
     dropFile2(e) {
       this.dragLeave('file2')
       this.$refs.file2.files = e.dataTransfer.files
       this.file2Chosen = [...this.$refs.file2.files][0]
-      console.log([...this.$refs.file2.files][0])
     },
     nextScreen() {
-      this.buildFilesObjects()
       if (this.validateFiles()) {
+        this.filesCustomName()
         this.$store.commit('setFile', {
           file: 'file1',
           chosen: this.file1Chosen
@@ -206,31 +201,11 @@ export default {
 }
 
 form {
-  @apply bg-yellow-300 p-12;
-  color: #0f3c4b;
-  text-align: center;
+  @apply bg-yellow-300 p-12 text-center;
   vertical-align: baseline;
   outline: 2px dashed #92b0b3;
   outline-offset: -10px;
   transition: outline-offset 0.15s ease-in-out, background-color 0.15s linear;
-}
-
-form input[type='file'] {
-  display: none;
-  /* vertical-align: baseline;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  margin: 0;
-  line-height: normal;
-  border-radius: 0;
-  border: none;
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1; */
 }
 
 .is-dragover {

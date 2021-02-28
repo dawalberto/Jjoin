@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="flex justify-center items-center font-light">
-      <span>{{ file1Name }}.</span>
+      <span class="text-lg mr-0.5">{{ file1Name }}</span>
       <span>
         <file-header-cols-select file="file1" :cols="file1HeaderCols" />
       </span>
       <span class="mx-4"><comparison-operators-select /></span>
-      <span>{{ file2Name }}.</span>
+      <span class="text-lg mr-0.5">{{ file2Name }}</span>
       <span>
         <file-header-cols-select file="file2" :cols="file2HeaderCols" />
       </span>
