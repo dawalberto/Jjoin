@@ -28,6 +28,7 @@
     >
       <button
         v-if="showDownloadButton"
+        :disabled="downloadButtonDisabled"
         @click="showPromptToSelectDirToDownload"
         class="bg-yellow-300 py-4 px-6 uppercase tracking-wider font-thin text-4xl"
       >
@@ -39,8 +40,8 @@
 
 <script>
 const fs = require('fs')
-// const { app } = require('electron')
 const zipdir = require('zip-dir')
+const electron = require('electron')
 import { mapState } from 'vuex'
 
 export default {
@@ -51,7 +52,6 @@ export default {
   mounted() {
     setTimeout(() => {
       this.joinFiles()
-      // this.writeFileSync()
     }, 0)
   },
   computed: {
@@ -74,7 +74,8 @@ export default {
       tempDirectoryJjoin: '',
       tempDirectoryJjoinManyFiles: '',
       directoryToDownload: '',
-      showDownloadButton: false
+      showDownloadButton: false,
+      downloadButtonDisabled: false
     }
   },
   watch: {
@@ -89,8 +90,7 @@ export default {
   },
   methods: {
     createTmpDirsIfNotExists() {
-      // let tempDir = `${app.getPath('temp')}`
-      this.tempDirectory = '/Users/dawalberto/Desktop/tempDev'
+      this.tempDirectory = (electron.app || electron.remote.app).getPath('home')
       this.tempDirectoryJjoin = `${this.tempDirectory}/.jjoin`
       this.tempDirectoryJjoinManyFiles = `${this.tempDirectoryJjoin}/jjoinFiles`
 
@@ -244,6 +244,7 @@ export default {
       }
     },
     showPromptToSelectDirToDownload() {
+      this.downloadButtonDisabled = true
       document.querySelector('#selectDirToDownload').click()
     },
     async zipAndDownloadFiles() {
@@ -256,6 +257,7 @@ export default {
           `${this.directoryToDownload}/jjoin.zip`
         )
         this.deleteTempDirectoryJjoin()
+        this.downloadButtonDisabled = false
       } catch (error) {
         console.log('zipAndDownloadFiles', error)
       }
