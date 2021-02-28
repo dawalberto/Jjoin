@@ -5,8 +5,8 @@
       @addField="addField"
       class="fields-to-add"
     />
-    <div class="body-screen">
-      <div class="w-2/4 mr-8">
+    <div class="body-screen space-x-4">
+      <div class="w-2/5">
         <div class="flex items-center">
           <input
             @change="checkboxChange"
@@ -26,20 +26,22 @@
         >
           add field
         </button>
-        <div class="mt-16">
-          <div class="flex items-center">
+        <div class="mt-16 h-20 relative">
+          <div
+            class="flex items-center absolute top-2/4 left-2 transform -translate-y-2/4"
+          >
             <label for="oneFileName" class="mr-2">Name:</label>
             <input
               id="oneFileName"
               v-model="oneFileName"
               type="text"
-              class="input-file mr-6"
+              class="input-file mr-4"
             />
             <label for="oneFileExtension" class="mr-2">Extension:</label>
             <select
               id="oneFileExtension"
               v-model="oneFileExtension"
-              class="select-extension-file"
+              class="select-extension-file mr-4"
             >
               <option
                 v-for="extension of extensions"
@@ -52,7 +54,7 @@
           </div>
         </div>
       </div>
-      <div class="w-2/4">
+      <div class="w-2/5">
         <div class="flex items-center">
           <input
             @change="checkboxChange"
@@ -71,14 +73,16 @@
         >
           add field
         </button>
-        <div class="mt-16">
-          <div class="flex items-center">
+        <div class="mt-16 h-20 relative">
+          <div
+            class="flex items-center absolute top-2/4 left-2 transform -translate-y-2/4"
+          >
             <label for="manyFilesName" class="mr-2">Name:</label>
             <input
               id="manyFilesName"
               v-model="manyFilesName"
               type="text"
-              class="input-file mr-6"
+              class="input-file mr-4"
             />
             <label for="manyFilesExtension" class="mx-2">Extension:</label>
             <select

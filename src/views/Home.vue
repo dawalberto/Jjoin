@@ -4,6 +4,9 @@
 
 <script>
 export default {
+  created() {
+    this.start()
+  },
   methods: {
     start() {
       this.$store.commit('showNav')
