@@ -5,6 +5,7 @@
     <div>
       <button
         class="mx-4 bg-gray-800 text-white px-6 py-4 w-32 text-center uppercase"
+        :class="{ hidden: currentPage === 'Screen1' }"
         @click="$emit('previous-screen')"
       >
         previous
@@ -22,7 +23,18 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      currentPage: ''
+    }
+  },
+  watch: {
+    '$store.state.currentPage': function() {
+      this.currentPage = this.$store.state.currentPage
+    }
+  }
+}
 </script>
 
 <style></style>
