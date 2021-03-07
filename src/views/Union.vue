@@ -26,8 +26,7 @@
     </div>
     <div
       class="flex justify-center bg-transparent fixed bottom-0 left-0 w-full p-10"
-    >
-    </div>
+    ></div>
   </div>
 </template>
 
@@ -67,7 +66,7 @@ export default {
       tempDirectory: '',
       tempDirectoryJjoin: '',
       tempDirectoryJjoinManyFiles: '',
-      directoryToDownload: '',
+      directoryToDownload: ''
     }
   },
   methods: {
@@ -208,37 +207,38 @@ export default {
       }
     },
     selectDirToDownload() {
-      electron.remote.dialog.showOpenDialog({ properties: ['openDirectory'] })
-      .then((res) => {
-        console.log('res', res)
-        let pathDirectorySelected = res.filePaths
-        if (!res.filePaths.length) {
-          alert('Operation canceled')
-          this.processing = false
-          return
-        }
-
-        this.directoryToDownload = pathDirectorySelected[0]
-
-        if (this.filesToSaveOptions.manyFiles.checked) {
-          if (!fs.existsSync(`${this.directoryToDownload}/fileByJoin`)) {
-            fs.mkdirSync(`${this.directoryToDownload}/fileByJoin`, {
-              recursive: true
-            })
+      electron.remote.dialog
+        .showOpenDialog({ properties: ['openDirectory'] })
+        .then(res => {
+          console.log('res', res)
+          let pathDirectorySelected = res.filePaths
+          if (!res.filePaths.length) {
+            alert('Operation canceled')
+            this.processing = false
+            return
           }
-        }
 
-        this.joinFiles()
+          this.directoryToDownload = pathDirectorySelected[0]
 
-        if (this.filesToSaveOptions.oneFile.checked) {
-          this.writeFileSync('oneFile')
-        }
-        this.processing = false
-        this.joined = true
-      })
-      .catch((error) => {
-        console.log('error', error)
-      })
+          if (this.filesToSaveOptions.manyFiles.checked) {
+            if (!fs.existsSync(`${this.directoryToDownload}/fileByJoin`)) {
+              fs.mkdirSync(`${this.directoryToDownload}/fileByJoin`, {
+                recursive: true
+              })
+            }
+          }
+
+          this.joinFiles()
+
+          if (this.filesToSaveOptions.oneFile.checked) {
+            this.writeFileSync('oneFile')
+          }
+          this.processing = false
+          this.joined = true
+        })
+        .catch(error => {
+          console.log('error', error)
+        })
     },
     backHome() {
       this.$store.commit('deleteConditions')
