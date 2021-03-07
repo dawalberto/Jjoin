@@ -63,9 +63,6 @@ export default {
       oneFileValueReadyToWrite: '',
       manyFilesValueReadyToWrite: '',
       manyFilesNameReadyToWrite: '',
-      tempDirectory: '',
-      tempDirectoryJjoin: '',
-      tempDirectoryJjoinManyFiles: '',
       directoryToDownload: ''
     }
   },
