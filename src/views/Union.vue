@@ -19,7 +19,7 @@
       </h1>
       <h1
         v-else-if="joined"
-        class="text-4xl font-thin tracking-wider flex items-center"
+        class="text-4xl justify-center font-thin tracking-wider flex items-center"
       >
         Completed 🎉
       </h1>
@@ -30,10 +30,27 @@
       >
         join and download files
       </button>
+      <div
+        v-show="joined"
+        class="mt-6 w-full flex flex-col items-start space-y-1"
+      >
+        <h1 class="ml-2 text-2xl font-thin">Summary</h1>
+        <p class="mt-4 tracking-wide">
+          👉 Selected conditions:
+          <span class="font-bold">{{ conditions | conditionsSummary }}</span>
+        </p>
+        <p class="tracking-wide">
+          👉 Total match: <span class="font-bold">{{ totalMatch }}</span>
+        </p>
+        <p class="tracking-wide">
+          👉 Total not found: <span class="font-bold">{{ totalNotMatch }}</span>
+        </p>
+        <p class="tracking-wide">
+          👉 Files generated directory:
+          <span class="font-bold">{{ directoryToDownload }}</span>
+        </p>
+      </div>
     </div>
-    <div
-      class="flex justify-center bg-transparent fixed bottom-0 left-0 w-full p-10"
-    ></div>
   </div>
 </template>
 
@@ -70,7 +87,20 @@ export default {
       oneFileValueReadyToWrite: '',
       manyFilesValueReadyToWrite: '',
       manyFilesNameReadyToWrite: '',
-      directoryToDownload: ''
+      directoryToDownload: '',
+      totalMatch: 0,
+      totalNotMatch: 0
+    }
+  },
+  filters: {
+    conditionsSummary(conditions) {
+      let conditionsText = conditions.map(condition => {
+        return typeof condition === 'object'
+          ? `File1[${condition.file1.text}] ${condition.comparisonOperator.text} File2[${condition.file2.text}]`
+          : ` ${condition} `
+      })
+
+      return conditionsText.toString().replaceAll(',', '')
     }
   },
   methods: {
@@ -139,9 +169,14 @@ export default {
       }
     },
     joinFiles() {
+      let match
+
       for (let i = 0; i < this.file1Json.length; i++) {
+        match = false
+
         for (let j = 0; j < this.file2Json.length; j++) {
           if (this.buildCondition(i, j)) {
+            match = true
             if (this.filesToSaveOptions.oneFile.checked) {
               this.oneFileValueReadyToWrite += `${this.getValueToWriteInFile(
                 i,
@@ -163,6 +198,8 @@ export default {
             continue
           }
         }
+
+        match ? this.totalMatch++ : this.totalNotMatch++
       }
     },
     getValueToWriteInFile(i, j, writeIn) {
@@ -218,7 +255,6 @@ export default {
       electron.remote.dialog
         .showOpenDialog({ properties: ['openDirectory'] })
         .then(res => {
-          console.log('res', res)
           let pathDirectorySelected = res.filePaths
           if (!res.filePaths.length) {
             alert('Operation canceled')
@@ -247,7 +283,7 @@ export default {
           this.runProcessManually = false
         })
         .catch(error => {
-          console.log('error', error)
+          console.log('selectDirToDownload', error)
         })
     },
     backHome() {
