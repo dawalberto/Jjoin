@@ -1,58 +1,51 @@
 <template>
   <div>
     <button @click="backHome">HOME</button>
-    <input
-      type="file"
-      id="selectDirToDownload"
-      @change="onSelectDirToDownload"
-      class="hidden"
-      webkitdirectory
-    />
     <div
       class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4"
     >
-      <h1 class="text-4xl font-thin tracking-wider flex items-center">
-        <template v-if="processing">
+      <h1
+        v-if="processing"
+        class="text-4xl font-thin tracking-wider flex items-center"
+      >
+        <div>
           <img
             src="@/assets/images/loader.svg"
             alt="loader"
             class="inline mr-4 h-9 w-9 animate-spin"
           />
-          <span>Joining</span>
-        </template>
-        <span v-else>Joined 🎉</span>
+          <span>Processing</span>
+        </div>
+      </h1>
+      <h1
+        v-else-if="joined"
+        class="text-4xl font-thin tracking-wider flex items-center"
+      >
+        Completed 🎉
       </h1>
     </div>
     <div
       class="flex justify-center bg-transparent fixed bottom-0 left-0 w-full p-10"
     >
-      <button
-        v-if="showDownloadButton"
-        :disabled="downloadButtonDisabled"
-        @click="showPromptToSelectDirToDownload"
-        class="bg-yellow-300 py-4 px-6 uppercase tracking-wider font-thin text-4xl"
-      >
-        download files
-      </button>
     </div>
   </div>
 </template>
 
 <script>
 const fs = require('fs')
-const zipdir = require('zip-dir')
 const electron = require('electron')
+
 import { mapState } from 'vuex'
 
 export default {
   created() {
-    this.createTmpDirsIfNotExists()
     this.$store.commit('hiddeNav')
   },
   mounted() {
     setTimeout(() => {
-      this.joinFiles()
-    }, 0)
+      this.processing = true
+      this.selectDirToDownload()
+    }, 100)
   },
   computed: {
     ...mapState([
@@ -66,7 +59,8 @@ export default {
   },
   data() {
     return {
-      processing: true,
+      processing: false,
+      joined: false,
       oneFileValueReadyToWrite: '',
       manyFilesValueReadyToWrite: '',
       manyFilesNameReadyToWrite: '',
@@ -74,37 +68,9 @@ export default {
       tempDirectoryJjoin: '',
       tempDirectoryJjoinManyFiles: '',
       directoryToDownload: '',
-      showDownloadButton: false,
-      downloadButtonDisabled: false
-    }
-  },
-  watch: {
-    processing(processing) {
-      if (!processing) {
-        if (this.filesToSaveOptions.oneFile.checked) {
-          this.writeFileSync('oneFile')
-        }
-        this.showDownloadButton = true
-      }
     }
   },
   methods: {
-    createTmpDirsIfNotExists() {
-      this.tempDirectory = (electron.app || electron.remote.app).getPath('home')
-      this.tempDirectoryJjoin = `${this.tempDirectory}/.jjoin`
-      this.tempDirectoryJjoinManyFiles = `${this.tempDirectoryJjoin}/jjoinFiles`
-
-      if (!fs.existsSync(this.tempDirectoryJjoin)) {
-        fs.mkdirSync(this.tempDirectoryJjoin, { recursive: true })
-      }
-      if (this.filesToSaveOptions.manyFiles.checked) {
-        if (!fs.existsSync(this.tempDirectoryJjoinManyFiles)) {
-          fs.mkdirSync(this.tempDirectoryJjoinManyFiles, {
-            recursive: true
-          })
-        }
-      }
-    },
     buildCondition(i, j) {
       let condition
       let nextCondition
@@ -195,8 +161,6 @@ export default {
           }
         }
       }
-
-      this.processing = false
     },
     getValueToWriteInFile(i, j, writeIn) {
       let valueToWrite
@@ -228,11 +192,11 @@ export default {
 
       if (file === 'oneFile') {
         name = this.filesToSaveOptions.oneFile.name
-        directory = this.tempDirectoryJjoin
+        directory = this.directoryToDownload
         data = this.oneFileValueReadyToWrite
       } else {
         name = this.manyFilesNameReadyToWrite
-        directory = this.tempDirectoryJjoinManyFiles
+        directory = `${this.directoryToDownload}/fileByJoin`
         data = this.manyFilesValueReadyToWrite
       }
 
@@ -243,33 +207,38 @@ export default {
         console.erroror('writeFileSync', error)
       }
     },
-    showPromptToSelectDirToDownload() {
-      this.downloadButtonDisabled = true
-      document.querySelector('#selectDirToDownload').click()
-    },
-    async zipAndDownloadFiles() {
-      try {
-        await zipdir(this.tempDirectoryJjoin, {
-          saveTo: `${this.tempDirectory}/jjoin.zip`
-        })
-        fs.renameSync(
-          `${this.tempDirectory}/jjoin.zip`,
-          `${this.directoryToDownload}/jjoin.zip`
-        )
-        this.deleteTempDirectoryJjoin()
-        this.downloadButtonDisabled = false
-      } catch (error) {
-        console.log('zipAndDownloadFiles', error)
-      }
-    },
-    onSelectDirToDownload(e) {
-      let directory = e.target.files[0].path
-      directory = directory.slice(0, directory.lastIndexOf('/'))
-      this.directoryToDownload = directory
-      this.zipAndDownloadFiles()
-    },
-    deleteTempDirectoryJjoin() {
-      fs.rmdirSync(this.tempDirectoryJjoin, { recursive: true })
+    selectDirToDownload() {
+      electron.remote.dialog.showOpenDialog({ properties: ['openDirectory'] })
+      .then((res) => {
+        console.log('res', res)
+        let pathDirectorySelected = res.filePaths
+        if (!res.filePaths.length) {
+          alert('Operation canceled')
+          this.processing = false
+          return
+        }
+
+        this.directoryToDownload = pathDirectorySelected[0]
+
+        if (this.filesToSaveOptions.manyFiles.checked) {
+          if (!fs.existsSync(`${this.directoryToDownload}/fileByJoin`)) {
+            fs.mkdirSync(`${this.directoryToDownload}/fileByJoin`, {
+              recursive: true
+            })
+          }
+        }
+
+        this.joinFiles()
+
+        if (this.filesToSaveOptions.oneFile.checked) {
+          this.writeFileSync('oneFile')
+        }
+        this.processing = false
+        this.joined = true
+      })
+      .catch((error) => {
+        console.log('error', error)
+      })
     },
     backHome() {
       this.$store.commit('deleteConditions')
