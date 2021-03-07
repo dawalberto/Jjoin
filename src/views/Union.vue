@@ -23,6 +23,13 @@
       >
         Completed 🎉
       </h1>
+      <button
+        v-show="runProcessManually && !processing"
+        @click="runProcess"
+        class="bg-yellow-300 py-4 px-6 uppercase tracking-wider font-thin text-4xl"
+      >
+        join and download files
+      </button>
     </div>
     <div
       class="flex justify-center bg-transparent fixed bottom-0 left-0 w-full p-10"
@@ -42,8 +49,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.processing = true
-      this.selectDirToDownload()
+      this.runProcess()
     }, 100)
   },
   computed: {
@@ -60,6 +66,7 @@ export default {
     return {
       processing: false,
       joined: false,
+      runProcessManually: false,
       oneFileValueReadyToWrite: '',
       manyFilesValueReadyToWrite: '',
       manyFilesNameReadyToWrite: '',
@@ -203,6 +210,10 @@ export default {
         console.erroror('writeFileSync', error)
       }
     },
+    runProcess() {
+      this.processing = true
+      this.selectDirToDownload()
+    },
     selectDirToDownload() {
       electron.remote.dialog
         .showOpenDialog({ properties: ['openDirectory'] })
@@ -212,6 +223,7 @@ export default {
           if (!res.filePaths.length) {
             alert('Operation canceled')
             this.processing = false
+            this.runProcessManually = true
             return
           }
 
@@ -232,6 +244,7 @@ export default {
           }
           this.processing = false
           this.joined = true
+          this.runProcessManually = false
         })
         .catch(error => {
           console.log('error', error)
