@@ -1,6 +1,11 @@
 <template>
   <div>
-    <button @click="backHome">HOME</button>
+    <img
+      @click="backHome"
+      src="@/assets/images/home.svg"
+      alt="home"
+      class="w-10 h-10 mt-6 ml-6 cursor-pointer"
+    />
     <div
       class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4"
     >
