@@ -18,7 +18,7 @@
       <h1 class="text-center text-4xl font-thin tracking-wider">
         Union conditions
       </h1>
-      <div class="mx-auto w-2/4 h-2 mt-2">
+      <div class="mx-auto w-full h-2 mt-2">
         <union-conditions
           :file1Name="file1.customName"
           :file2Name="file2.customName"

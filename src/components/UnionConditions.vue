@@ -1,15 +1,19 @@
 <template>
   <div>
-    <div class="flex justify-center items-center font-light">
-      <span class="text-lg mr-0.5">{{ file1Name }}</span>
-      <span>
-        <file-header-cols-select file="file1" :cols="file1HeaderCols" />
-      </span>
+    <div class="flex justify-center items-center font-light w-full">
+      <div class="bg-green-100 border border-green-300 py-0.5 pl-1.5 pr-0.5">
+        <span class="text-lg mr-1.5 font-normal">{{ file1Name }}</span>
+        <span>
+          <file-header-cols-select file="file1" :cols="file1HeaderCols" />
+        </span>
+      </div>
       <span class="mx-4"><comparison-operators-select /></span>
-      <span class="text-lg mr-0.5">{{ file2Name }}</span>
-      <span>
-        <file-header-cols-select file="file2" :cols="file2HeaderCols" />
-      </span>
+      <div class="bg-green-100 border border-green-300 py-0.5 pl-1.5 pr-0.5">
+        <span class="text-lg mr-1.5 font-normal">{{ file2Name }}</span>
+        <span>
+          <file-header-cols-select file="file2" :cols="file2HeaderCols" />
+        </span>
+      </div>
       <template v-if="conditions.length > 0">
         <button @click="addCondition('&&')" class="bg-yellow-300 w-8 h-8 ml-8">
           &&
