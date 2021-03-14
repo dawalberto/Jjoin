@@ -1,11 +1,12 @@
 <template>
   <div>
-    <img
-      @click="backHome"
-      src="@/assets/images/home.svg"
-      alt="home"
-      class="w-10 h-10 mt-6 ml-6 cursor-pointer"
-    />
+    <button @click="backHome" :disabled="backHomeDisabled">
+      <img
+        src="@/assets/images/home.svg"
+        alt="home"
+        class="w-10 h-10 mt-6 ml-6 cursor-pointer"
+      />
+    </button>
     <div
       class="absolute top-2/4 left-2/4 transform -translate-x-2/4 -translate-y-2/4"
     >
@@ -89,6 +90,7 @@ export default {
       processing: false,
       joined: false,
       runProcessManually: false,
+      backHomeDisabled: true,
       oneFileValueReadyToWrite: '',
       manyFilesValueReadyToWrite: '',
       manyFilesNameReadyToWrite: '',
@@ -285,6 +287,7 @@ export default {
           }
           this.processing = false
           this.joined = true
+          this.backHomeDisabled = false
           this.runProcessManually = false
         })
         .catch(error => {
